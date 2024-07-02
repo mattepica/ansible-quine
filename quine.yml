@@ -1,0 +1,35 @@
+---
+- name: Quine
+  hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - set_fact:
+        he: !unsafe |-
+          ---
+          - name: Quine
+            hosts: 127.0.0.1
+            connection: local
+            gather_facts: no
+
+            tasks:
+              - set_fact:
+                  he: !unsafe |-
+                    9
+
+              - debug:
+                  msg: ""
+                vars:
+                  ansible_callback_diy_runner_on_ok_msg: |
+                    {% for x in he %}
+                    {{ he | indent(10) if x | int >8 else x -}}
+                    {% endfor %}
+
+    - debug:
+        msg: ""
+      vars:
+        ansible_callback_diy_runner_on_ok_msg: |
+          {% for x in he %}
+          {{ he | indent(10) if x | int >8 else x -}}
+          {% endfor %}
